@@ -1,5 +1,14 @@
+#define RGFW_WAYLAND
 #define RGFW_IMPLEMENTATION
 #include "RGFW_impl.h"
+
+#include "../third_party/xdg-shell.c"
+#include "../third_party/xdg-decoration-unstable-v1.c"
+#include "../third_party/xdg-toplevel-icon-v1.c"
+#include "../third_party/relative-pointer-unstable-v1.c"
+#include "../third_party/pointer-constraints-unstable-v1.c"
+#include "../third_party/xdg-output-unstable-v1.c"
+#include "../third_party/pointer-warp-v1.c"
 
 wrapper_eventData wrapper_getEventData(RGFW_event* e) {
     wrapper_eventData d = {
