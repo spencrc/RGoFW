@@ -12,3 +12,7 @@ import "unsafe"
 func GetDisplayX11() unsafe.Pointer {
 	return unsafe.Pointer(C.RGFW_getDisplay_X11())
 }
+
+func GetDisplayWayland() unsafe.Pointer {
+	return unsafe.Pointer(C.RGFW_getDisplay_Wayland())
+}

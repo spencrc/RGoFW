@@ -42,3 +42,11 @@ func (win *Window) Close() {
 func (win *Window) GetWindowX11() uint32 {
 	return uint32(C.RGFW_window_getWindow_X11(win.cPtr))
 }
+
+func (win *Window) GetHWND() unsafe.Pointer {
+	return unsafe.Pointer(C.RGFW_window_getHWND(win.cPtr))
+}
+
+func (win *Window) GetWindowWayland() unsafe.Pointer {
+	return unsafe.Pointer(C.RGFW_window_getWindow_Wayland(win.cPtr))
+}
