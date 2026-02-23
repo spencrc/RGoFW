@@ -1,8 +1,7 @@
 package rgfw
 
 /*
-	// This header includes RGFW and RGFW_IMPLEMENTATION! Including RGFW again will freak Go out
-	#include "RGFW_impl.h"
+	#include "RFGW_impl.h"
 */
 import "C"
 import (
@@ -37,16 +36,4 @@ func (win *Window) ShouldClose() bool {
 
 func (win *Window) Close() {
 	C.RGFW_window_close(win.cPtr)
-}
-
-func (win *Window) GetWindowX11() uint32 {
-	return uint32(C.RGFW_window_getWindow_X11(win.cPtr))
-}
-
-func (win *Window) GetHWND() unsafe.Pointer {
-	return unsafe.Pointer(C.RGFW_window_getHWND(win.cPtr))
-}
-
-func (win *Window) GetWindowWayland() unsafe.Pointer {
-	return unsafe.Pointer(C.RGFW_window_getWindow_Wayland(win.cPtr))
 }

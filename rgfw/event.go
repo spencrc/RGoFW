@@ -1,8 +1,8 @@
 package rgfw
 
 /*
-	// This header includes RGFW and RGFW_IMPLEMENTATION! Including RGFW again will freak Go out
-	#include "RGFW_impl.h"
+	#include "RFGW_impl.h"
+	#include "event.h"
 */
 import "C"
 
