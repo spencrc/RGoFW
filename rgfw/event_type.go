@@ -1,95 +1,70 @@
 package rgfw
 
-import "unsafe"
+/*
+	#include "RFGW_impl.h"
+*/
+import "C"
 
 type EventType uint8
 
-type CommonEvent struct {
-	Type EventType
-	Window *Window
-}
+const (
+    EventNone                EventType = C.RGFW_eventNone
+    EventKeyPressed          EventType = C.RGFW_keyPressed
+    EventKeyReleased         EventType = C.RGFW_keyReleased
+    // EventKeyChar             EventType = C.RGFW_keyChar
+    EventMouseButtonPressed  EventType = C.RGFW_mouseButtonPressed
+    EventMouseButtonReleased EventType = C.RGFW_mouseButtonReleased
+    EventMouseScroll         EventType = C.RGFW_mouseScroll
+    EventMousePosChanged     EventType = C.RGFW_mousePosChanged
+    EventWindowMoved         EventType = C.RGFW_windowMoved
+    EventWindowResized       EventType = C.RGFW_windowResized
+    EventFocusIn             EventType = C.RGFW_focusIn
+    EventFocusOut            EventType = C.RGFW_focusOut
+    EventMouseEnter          EventType = C.RGFW_mouseEnter
+    EventMouseLeave          EventType = C.RGFW_mouseLeave
+    EventWindowRefresh       EventType = C.RGFW_windowRefresh
+    EventQuit                EventType = C.RGFW_quit
+    EventDataDrop            EventType = C.RGFW_dataDrop
+    EventDataDrag            EventType = C.RGFW_dataDrag
+    EventWindowMaximized     EventType = C.RGFW_windowMaximized
+    EventWindowMinimized     EventType = C.RGFW_windowMinimized
+    EventWindowRestored      EventType = C.RGFW_windowRestored
+    EventScaleUpdated        EventType = C.RGFW_scaleUpdated
+    // EventMonitorConnected    EventType = C.RGFW_monitorConnected
+    // EventMonitorDisconnected EventType = C.RGFW_monitorDisconnected
+)
 
-type MouseButtonEvent struct {
-	Type EventType
-	Window *Window
-	Value  MouseButton 
-}
-
-type MouseScrollEvent struct {
-	Type EventType
-	Window *Window
-	X, Y   float32
-}
-
-type MousePosEvent struct {
-	Type EventType
-	Window     *Window
-	X, Y       int32
-	VecX, VecY float32
-}
-
-type KeyEvent struct {
-	Type EventType
-	Window *Window
-	Value  Key
-	Repeat bool   
-	Mod    Keymod 
-}
-
-type KeyCharEvent struct {
-	Type EventType
-	Window *Window
-	Value  uint32
-}
-
-type DataDropEvent struct {
-	Type EventType
-	Window *Window
-	Files  []string // Converted from char** for Go-friendliness
-	Count  uint64   // size_t
-}
-
-type DataDragEvent struct {
-	Type EventType
-	Window *Window
-	X, Y   int32
-}
-
-type ScaleUpdatedEvent struct {
-	Type EventType
-	Window *Window
-	X, Y   float32
-}
-
-type MonitorEvent struct {
-	Type EventType
-	Window  *Window
-	Monitor unsafe.Pointer // Or a specific Monitor struct if you've wrapped it
-}
+type EventFlag uint
 
 const (
-	EventNone             EventType = iota // 0
-	KeyPressed                             // 1
-	KeyReleased                            // 2
-	KeyChar                                // 3
-	MouseButtonPressed                     // 4
-	MouseButtonReleased                    // 5
-	MouseScroll                            // 6
-	MousePosChanged                        // 7
-	WindowMoved                            // 8
-	WindowResized                          // 9
-	FocusIn                                // 10
-	FocusOut                               // 11
-	MouseEnter                             // 12
-	MouseLeave                             // 13
-	WindowRefresh                          // 14
-	Quit                                   // 15
-	DataDrop                               // 16
-	DataDrag                               // 17
-	WindowMaximized                        // 18
-	WindowMinimized                        // 19
-	WindowRestored                         // 20
-	ScaleUpdated                           // 21
-	MonitorConnected                       // 22
-	MonitorDisconnected                     // 23
+    EventFlagKeyPressed          EventFlag = C.RGFW_keyPressedFlag
+    EventFlagKeyReleased         EventFlag = C.RGFW_keyReleasedFlag
+    // EventFlagKeyChar             EventFlag = C.RGFW_keyCharFlag
+    EventFlagMouseScroll         EventFlag = C.RGFW_mouseScrollFlag
+    EventFlagMouseButtonPressed  EventFlag = C.RGFW_mouseButtonPressedFlag
+    EventFlagMouseButtonReleased EventFlag = C.RGFW_mouseButtonReleasedFlag
+    EventFlagMousePosChanged     EventFlag = C.RGFW_mousePosChangedFlag
+    EventFlagMouseEnter          EventFlag = C.RGFW_mouseEnterFlag
+    EventFlagMouseLeave          EventFlag = C.RGFW_mouseLeaveFlag
+    EventFlagWindowMoved         EventFlag = C.RGFW_windowMovedFlag
+    EventFlagWindowResized       EventFlag = C.RGFW_windowResizedFlag
+    EventFlagFocusIn             EventFlag = C.RGFW_focusInFlag
+    EventFlagFocusOut            EventFlag = C.RGFW_focusOutFlag
+    EventFlagWindowRefresh       EventFlag = C.RGFW_windowRefreshFlag
+    EventFlagWindowMaximized     EventFlag = C.RGFW_windowMaximizedFlag
+    EventFlagWindowMinimized     EventFlag = C.RGFW_windowMinimizedFlag
+    EventFlagWindowRestored      EventFlag = C.RGFW_windowRestoredFlag
+    EventFlagScaleUpdated        EventFlag = C.RGFW_scaleUpdatedFlag
+    EventFlagQuit                EventFlag = C.RGFW_quitFlag
+    EventFlagDataDrop            EventFlag = C.RGFW_dataDropFlag
+    EventFlagDataDrag            EventFlag = C.RGFW_dataDragFlag
+    // EventFlagMonitorConnected    EventFlag = C.RGFW_monitorConnectedFlag
+    // EventFlagMonitorDisconnected EventFlag = C.RGFW_monitorDisconnectedFlag
+    EventFlagKeyEvents           EventFlag = C.RGFW_keyEventsFlag
+    EventFlagMouseEvents         EventFlag = C.RGFW_mouseEventsFlag
+    EventFlagWindowEvents        EventFlag = C.RGFW_windowEventsFlag
+    EventFlagFocusEvents         EventFlag = C.RGFW_focusEventsFlag
+    EventFlagDataDropEvents      EventFlag = C.RGFW_dataDropEventsFlag
+    // EventFlagMonitorEvents       EventFlag = C.RGFW_monitorEventsFlag
+    EventFlagAll                 EventFlag = C.RGFW_allEventFlags
 )

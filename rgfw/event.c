@@ -13,14 +13,14 @@ wrapper_eventData wrapper_getEventData(RGFW_event* e) {
         e->key.value,
         e->key.repeat,
         e->key.mod,
-        e->keyChar.value,
+        // e->keyChar.value,
         e->drop.files,
         e->drop.count,
         e->drag.x,
         e->drag.y,
         e->scale.x,
         e->scale.y,
-        e->monitor.monitor
+        // e->monitor.monitor
     };
     return d;
 }

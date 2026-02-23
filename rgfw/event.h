@@ -10,12 +10,12 @@ typedef struct {
     RGFW_key keyValue; 
 	RGFW_bool keyRepeat;
 	RGFW_keymod keyMod;
-    u32 keyCharValue;
+    // u32 keyCharValue;
     char** dataDropFiles;
     size_t dataDropCount;
     i32 dataDragX, dataDragY;
     float scaleUpdatedX, scaleUpdatedY;
-    const RGFW_monitor* monitor;
+    // const RGFW_monitor* monitor;
 } wrapper_eventData;
 
 wrapper_eventData wrapper_getEventData(RGFW_event* e);
