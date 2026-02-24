@@ -1,7 +1,7 @@
 package rgfw
 
 /*
-	#include "RFGW_impl.h"
+	#include "../third_party/RGFW.h"
 	#include "window_management.h"
 */
 import "C"
