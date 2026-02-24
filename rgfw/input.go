@@ -10,6 +10,10 @@ import (
 
 type Window struct {
 	ref *C.RGFW_window
+
+    fWindowMoved WindowMovedCallback
+    fWindowResized func(win *Window, w int32, h int32)
+    fWindowRestored func(win *Window, x int32, y int32, w int32, h int32)
 }
 
 // Returns true if the key is pressed during the current frame
