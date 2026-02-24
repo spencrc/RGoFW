@@ -1,4 +1,4 @@
-//go:build linux && !android && !wayland
+//go:build linux && !android && wayland
 
 package wgpurgfw
 
@@ -9,9 +9,9 @@ import (
 
 func GetSurfaceDescriptor(w *rgfw.Window) *wgpu.SurfaceDescriptor {
 	return &wgpu.SurfaceDescriptor{
-		XlibWindow: &wgpu.SurfaceDescriptorFromXlibWindow{
-			Display: rgfw.GetDisplayX11(),
-			Window:  w.GetWindowX11(),
+		WaylandSurface: &wgpu.SurfaceDescriptorFromWaylandSurface{
+			Display: rgfw.GetDisplayWayland(),
+			Surface: w.GetWindowWayland(),
 		},
 	}
 }
