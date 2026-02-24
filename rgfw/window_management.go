@@ -2,156 +2,223 @@ package rgfw
 
 /*
 	#include "RFGW_impl.h"
+	#include "event_data.h"
 */
 import "C"
-import (
-	"unsafe"
-)
+import "unsafe"
 
-type WindowFlag uint
+type EventType uint8
 
 const (
-    WindowFlagNoBorder          WindowFlag = C.RGFW_windowNoBorder
-    WindowFlagNoResize          WindowFlag = C.RGFW_windowNoResize
-    WindowFlagAllowDND          WindowFlag = C.RGFW_windowAllowDND
-    WindowFlagHideMouse         WindowFlag = C.RGFW_windowHideMouse
-    WindowFlagFullscreen        WindowFlag = C.RGFW_windowFullscreen
-    WindowFlagTransparent       WindowFlag = C.RGFW_windowTransparent
-    WindowFlagCenter            WindowFlag = C.RGFW_windowCenter
-    // WindowFlagRawMouse          WindowFlag = C.RGFW_windowRawMouse
-    WindowFlagScaleToMonitor    WindowFlag = C.RGFW_windowScaleToMonitor
-    WindowFlagHide              WindowFlag = C.RGFW_windowHide
-    WindowFlagMaximize          WindowFlag = C.RGFW_windowMaximize
-    WindowFlagCenterCursor      WindowFlag = C.RGFW_windowCenterCursor
-    WindowFlagFloating          WindowFlag = C.RGFW_windowFloating
-    WindowFlagFocusOnShow       WindowFlag = C.RGFW_windowFocusOnShow
-    WindowFlagMinimize          WindowFlag = C.RGFW_windowMinimize
-    WindowFlagFocus             WindowFlag = C.RGFW_windowFocus
-    // WindowFlagCaptureMouse      WindowFlag = C.RGFW_windowCaptureMouse
-    WindowFlagOpenGL            WindowFlag = C.RGFW_windowOpenGL
-    WindowFlagEGL               WindowFlag = C.RGFW_windowEGL
-    // WindowFlagNoDeinitOnClose   WindowFlag = C.RGFW_noDeinitOnClose
-    WindowFlagWindowedFullscreen   WindowFlag = C.RGFW_windowedFullscreen
-    // WindowFlagCaptureRawMouse   WindowFlag = C.RGFW_windowCaptureRawMouse
+    EventNone                EventType = C.RGFW_eventNone
+    EventKeyPressed          EventType = C.RGFW_keyPressed
+    EventKeyReleased         EventType = C.RGFW_keyReleased
+    // EventKeyChar             EventType = C.RGFW_keyChar
+    EventMouseButtonPressed  EventType = C.RGFW_mouseButtonPressed
+    EventMouseButtonReleased EventType = C.RGFW_mouseButtonReleased
+    EventMouseScroll         EventType = C.RGFW_mouseScroll
+    EventMousePosChanged     EventType = C.RGFW_mousePosChanged
+    EventWindowMoved         EventType = C.RGFW_windowMoved
+    EventWindowResized       EventType = C.RGFW_windowResized
+    EventFocusIn             EventType = C.RGFW_focusIn
+    EventFocusOut            EventType = C.RGFW_focusOut
+    EventMouseEnter          EventType = C.RGFW_mouseEnter
+    EventMouseLeave          EventType = C.RGFW_mouseLeave
+    EventWindowRefresh       EventType = C.RGFW_windowRefresh
+    EventQuit                EventType = C.RGFW_quit
+    EventDataDrop            EventType = C.RGFW_dataDrop
+    EventDataDrag            EventType = C.RGFW_dataDrag
+    EventWindowMaximized     EventType = C.RGFW_windowMaximized
+    EventWindowMinimized     EventType = C.RGFW_windowMinimized
+    EventWindowRestored      EventType = C.RGFW_windowRestored
+    EventScaleUpdated        EventType = C.RGFW_scaleUpdated
+    // EventMonitorConnected    EventType = C.RGFW_monitorConnected
+    // EventMonitorDisconnected EventType = C.RGFW_monitorDisconnected
 )
 
-// type FlashRequest uint8
+type EventFlag uint
 
-// const (
-// 	FlashCancel FlashRequest = C.RGFW_flashCancel
-// 	FlashBriefly FlashRequest = C.RGFW_flashBriefly
-// 	FlashUntilFocused FlashRequest = C.RGFW_flashUntilFocused
-// )
+const (
+    EventFlagKeyPressed          EventFlag = C.RGFW_keyPressedFlag
+    EventFlagKeyReleased         EventFlag = C.RGFW_keyReleasedFlag
+    // EventFlagKeyChar             EventFlag = C.RGFW_keyCharFlag
+    EventFlagMouseScroll         EventFlag = C.RGFW_mouseScrollFlag
+    EventFlagMouseButtonPressed  EventFlag = C.RGFW_mouseButtonPressedFlag
+    EventFlagMouseButtonReleased EventFlag = C.RGFW_mouseButtonReleasedFlag
+    EventFlagMousePosChanged     EventFlag = C.RGFW_mousePosChangedFlag
+    EventFlagMouseEnter          EventFlag = C.RGFW_mouseEnterFlag
+    EventFlagMouseLeave          EventFlag = C.RGFW_mouseLeaveFlag
+    EventFlagWindowMoved         EventFlag = C.RGFW_windowMovedFlag
+    EventFlagWindowResized       EventFlag = C.RGFW_windowResizedFlag
+    EventFlagFocusIn             EventFlag = C.RGFW_focusInFlag
+    EventFlagFocusOut            EventFlag = C.RGFW_focusOutFlag
+    EventFlagWindowRefresh       EventFlag = C.RGFW_windowRefreshFlag
+    EventFlagWindowMaximized     EventFlag = C.RGFW_windowMaximizedFlag
+    EventFlagWindowMinimized     EventFlag = C.RGFW_windowMinimizedFlag
+    EventFlagWindowRestored      EventFlag = C.RGFW_windowRestoredFlag
+    EventFlagScaleUpdated        EventFlag = C.RGFW_scaleUpdatedFlag
+    EventFlagQuit                EventFlag = C.RGFW_quitFlag
+    EventFlagDataDrop            EventFlag = C.RGFW_dataDropFlag
+    EventFlagDataDrag            EventFlag = C.RGFW_dataDragFlag
+    // EventFlagMonitorConnected    EventFlag = C.RGFW_monitorConnectedFlag
+    // EventFlagMonitorDisconnected EventFlag = C.RGFW_monitorDisconnectedFlag
+    EventFlagKeyEvents           EventFlag = C.RGFW_keyEventsFlag
+    EventFlagMouseEvents         EventFlag = C.RGFW_mouseEventsFlag
+    EventFlagWindowEvents        EventFlag = C.RGFW_windowEventsFlag
+    EventFlagFocusEvents         EventFlag = C.RGFW_focusEventsFlag
+    EventFlagDataDropEvents      EventFlag = C.RGFW_dataDropEventsFlag
+    // EventFlagMonitorEvents       EventFlag = C.RGFW_monitorEventsFlag
+    EventFlagAll                 EventFlag = C.RGFW_allEventFlags
+)
 
-type Window struct {
-	ref *C.RGFW_window
+type CommonEvent struct {
+	Type EventType
+	Window *Window
 }
 
-// Creates a new window.
-func CreateWindow(name string, x, y, w, h int, flags WindowFlag) *Window {
-	cName := C.CString(name)
-	defer C.free(unsafe.Pointer(cName))
-
-	winPtr := C.RGFW_createWindow(cName, C.i32(x), C.i32(y), C.i32(w), C.i32(h), C.uint(flags))
-
-	return &Window{ref: winPtr}
+type MouseButtonEvent struct {
+	Type EventType
+	Window *Window
+	Value  MouseButton 
 }
 
-// INTENTIONALLY UNIMPLEMENTED. WILL NOT ADD
-// Creates a new window using a pre-allocated window structure.
-// RGFW_createWindowPtr
-
-// Creates a new surface structure
-// RGFW_window_createSurface
-
-// INTENTIONALLY UNIMPLEMENTED. WILL NOT ADD
-// Creates a new surface structure using a pre-allocated surface structure
-// RGFW_window_createSurfacePtr
-
-// Set the function/callback used for converting surface data between formats
-// RGFW_surface_setConvertFunc
-
-// Blits a surface stucture to the window
-// RGFW_window_blitSurface
-
-// Gets the position of the window
-func (win *Window) GetPosition() (int, int) {
-    var x, y C.i32
-	C.RGFW_window_getPosition(win.ref, &x, &y)
-	return int(x), int(y)
+type MouseScrollEvent struct {
+	Type EventType
+	Window *Window
+	X, Y   float32
 }
 
-// Gets the size of the window
-func (win *Window) GetSize() (int, int) {
-	var w, h C.i32
-	C.RGFW_window_getSize(win.ref, &w, &h)
-	return int(w), int(h)
+type MousePosEvent struct {
+	Type EventType
+	Window     *Window
+	X, Y       int32
+	VecX, VecY float32
 }
 
-// Gets the size of the window in exact pixels
-// func (win *Window) GetSizeInPixels() (int, int) {
-// 	var w, h C.i32
-// 	C.RGFW_window_getSizeInPixels(win.ref, &w, &h)
-// 	return int(w), int(h)
+type KeyEvent struct {
+	Type EventType
+	Window *Window
+	Value  Key
+	Repeat bool   
+	Mod    Keymod 
+}
+
+// type KeyCharEvent struct {
+// 	Type EventType
+// 	Window *Window
+// 	Value  uint
 // }
 
-// Gets the flags of the window
-func (win *Window) GetFlags() WindowFlag {
-    return WindowFlag(C.RGFW_window_getFlags(win.ref))
+type DataDropEvent struct {
+	Type EventType
+	Window *Window
+	Files  []string // Converted from char** for Go-friendliness
+	Count  uint64   // size_t
 }
 
-// Returns the exit key assigned to the window
-func (win *Window) GetExitKey() Key {
-    return Key(C.RGFW_window_getExitKey(win.ref))
+type DataDragEvent struct {
+	Type EventType
+	Window *Window
+	X, Y   int32
 }
 
-// Sets the exit key for the window
-func (win *Window) SetExitKey(key Key) {
-    C.RGFW_window_setExitKey(win.ref, C.RGFW_key(key))
+type ScaleUpdatedEvent struct {
+	Type EventType
+	Window *Window
+	X, Y   float32
 }
 
-// Sets the types of events you want the window to receive
-func (win *Window) SetEnabledEvents(events EventFlag) {
-    C.RGFW_window_setEnabledEvents(win.ref, C.RGFW_eventFlag(events))
-}
-
-// Gets the currently enabled events for the window
-func (win *Window) GetEnabledEvents() EventFlag {
-    return EventFlag(C.RGFW_window_getEnabledEvents(win.ref))
-}
-
-// Enables all events and disables selected ones
-func (win *Window) SetDisabledEvents(events EventFlag) {
-    C.RGFW_window_setDisabledEvents(win.ref, C.RGFW_eventFlag(events))
-}
-
-// Directly enables or disables a specific event or group of events
-func (win *Window) SetEventState(event EventFlag, state bool) {
-    C.RGFW_window_setEventState(win.ref, C.RGFW_eventFlag(event), C.RGFW_bool(boolToInt(state)))
-}
-
-// Gets the user pointer associated with the window
-// func (win *Window) GetUserPtr() unsafe.Pointer {
-//     return C.RGFW_window_getUserPtr(win.ref)
+// type MonitorEvent struct {
+// 	Type EventType
+// 	Window  *Window
+// 	Monitor unsafe.Pointer // Or a specific Monitor struct if you've wrapped it
 // }
 
-// Sets a user pointer for the window
-// func (win *Window) SetUserPtr(ptr unsafe.Pointer) {
-//     C.RGFW_window_setUserPtr(win.ref, ptr)
-// }
+type Event struct {
+	Type EventType
+	Common CommonEvent
+	Button MouseButtonEvent
+	Scroll MouseScrollEvent
+	Mouse MousePosEvent
+	Key KeyEvent
+	// KeyChar KeyCharEvent
+	Drop DataDropEvent
+	Drag DataDragEvent
+	Scale ScaleUpdatedEvent
+	// Monitor MonitorEvent
+}
 
-// INTENTIONALLY UNIMPLEMENTED. WILL NOT ADD
-// Retrieves the platform-specific window source pointer
-// RGFW_window_getSrc
+func getEventData(cEvent *C.RGFW_event, win *Window) Event {
+	data := C.wrapper_getEventData(cEvent)
+	eventType := EventType(data.eventType)
+
+	common := CommonEvent{
+		Type: eventType,
+		Window: win,
+	}
+
+	goEvent := Event{Type: eventType, Common: common}
+
+	switch eventType {
+	case EventKeyPressed, EventKeyReleased:
+		goEvent.Key = KeyEvent{
+			Type: eventType,
+			Window: win,
+			Value: Key(data.keyValue),
+			Repeat: data.keyRepeat == C.RGFW_TRUE,
+			Mod: Keymod(data.keyMod),
+		}
+	case EventMouseButtonPressed, EventMouseButtonReleased:
+		goEvent.Button = MouseButtonEvent{
+            Type: eventType,
+            Window: win,
+            Value: MouseButton(data.mouseButtonValue),
+        }
+	}
+
+	return goEvent
+}
 
 // Set the window flags (will undo flags if they don't match the old ones)
 func (win *Window) SetFlags(flags WindowFlag) {
     C.RGFW_window_setFlags(win.ref, C.RGFW_windowFlags(flags))
 }
 
-// RGFW_window_checkEvent can be found in event.go!
+// Polls and pops the next event with the matching target window in event queue, pushes back events that don't match
+//
+// NOTE: Using this function without a loop may cause event lag.
+// For multi-threaded systems, use RGFW_pollEvents combined with RGFW_window_checkQueuedEvent.
+//  
+// Example:
+// 
+//  event, foundEvent := win.CheckEvent()
+//  for ;foundEvent; event, foundEvent = win.CheckEvent() {
+// 		// handle event
+//  }
+func (win *Window) CheckEvent() (Event, bool) {
+	var cEvent C.RGFW_event
+	foundEvent := C.RGFW_window_checkEvent(win.ref, &cEvent)
+	if foundEvent == C.RGFW_FALSE {
+		return Event{}, false
+	}
 
-// RGFW_window_checkQueuedEvent can be found in event.go!
+	goEvent := getEventData(&cEvent, win)
+
+	return goEvent, true
+}
+
+// Pops the first queued event for the window
+func (win *Window) CheckQueuedEvent() (Event, bool) {
+	var cEvent C.RGFW_event
+	foundEvent := C.RGFW_window_checkQueuedEvent(win.ref, &cEvent)
+	if foundEvent == C.RGFW_FALSE {
+		return Event{}, false
+	}
+
+	goEvent := getEventData(&cEvent, win)
+
+	return goEvent, true
+}
 
 // Checks if a key was pressed while the window is in focus.
 // key is the key code to check
@@ -220,6 +287,7 @@ func (win *Window) IsDataDragging() bool {
 
 // Closes the window and frees its associated structure
 func (win *Window) Close() {
+    windows.remove(win.ref)
 	C.RGFW_window_close(win.ref)
 }
 
@@ -228,7 +296,7 @@ func (win *Window) Close() {
 // RGFW_window_closePtr
 
 // Moves the window to a new position on the screen
-func (win *Window) Move(x, y int) {
+func (win *Window) Move(x, y int32) {
     C.RGFW_window_move(win.ref, C.i32(x), C.i32(y))
 }
 
@@ -236,22 +304,22 @@ func (win *Window) Move(x, y int) {
 // RGFW_window_moveToMonitor
 
 // Resizes the window to the given dimensions
-func (win *Window) Resize(w, h int) {
+func (win *Window) Resize(w, h int32) {
     C.RGFW_window_resize(win.ref, C.i32(w), C.i32(h))
 }
 
 // Sets the aspect ratio of the window
-func (win *Window) SetAspectRatio(w, h int) {
+func (win *Window) SetAspectRatio(w, h int32) {
     C.RGFW_window_setAspectRatio(win.ref, C.i32(w), C.i32(h))
 }
 
 // Sets the minimum size of the window
-func (win *Window) SetMinSize(w, h int) {
+func (win *Window) SetMinSize(w, h int32) {
     C.RGFW_window_setMinSize(win.ref, C.i32(w), C.i32(h))
 }
 
 // Sets the maximum size of the window
-func (win *Window) SetMaxSize(w, h int) {
+func (win *Window) SetMaxSize(w, h int32) {
     C.RGFW_window_setMaxSize(win.ref, C.i32(w), C.i32(h))
 }
 
@@ -391,6 +459,12 @@ func (win *Window) SetShouldClose(shouldClose bool) {
     C.RGFW_window_setShouldClose(win.ref, C.RGFW_bool(boolToInt(shouldClose)))
 }
 
+func GetGlobalMouse() (int32, int32) {
+    var x, y C.i32
+    C.RGFW_getGlobalMouse(&x, &y)
+    return int32(x), int32(y)
+}
+
 // Retrieves the mouse position relative to the window.
 // success is true if the position was successfully retrieved
 // RGFW_window_getMouse
@@ -439,9 +513,3 @@ func (win *Window) IsMaximized() bool {
 func (win *Window) IsFloating() bool {
 	return C.RGFW_window_isFloating(win.ref) == C.RGFW_TRUE
 }
-
-// Scales the window to match its monitor’s resolution.
-// RGFW_window_scaleToMonitor
-
-// Retrieves the monitor structure associated with the window.
-// RGFW_window_getMonitor

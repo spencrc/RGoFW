@@ -5,6 +5,42 @@ package rgfw
 */
 import "C"
 
+type WindowFlag uint
+
+const (
+    WindowFlagNoBorder          WindowFlag = C.RGFW_windowNoBorder
+    WindowFlagNoResize          WindowFlag = C.RGFW_windowNoResize
+    WindowFlagAllowDND          WindowFlag = C.RGFW_windowAllowDND
+    WindowFlagHideMouse         WindowFlag = C.RGFW_windowHideMouse
+    WindowFlagFullscreen        WindowFlag = C.RGFW_windowFullscreen
+    WindowFlagTransparent       WindowFlag = C.RGFW_windowTransparent
+    WindowFlagCenter            WindowFlag = C.RGFW_windowCenter
+    // WindowFlagRawMouse          WindowFlag = C.RGFW_windowRawMouse
+    WindowFlagScaleToMonitor    WindowFlag = C.RGFW_windowScaleToMonitor
+    WindowFlagHide              WindowFlag = C.RGFW_windowHide
+    WindowFlagMaximize          WindowFlag = C.RGFW_windowMaximize
+    WindowFlagCenterCursor      WindowFlag = C.RGFW_windowCenterCursor
+    WindowFlagFloating          WindowFlag = C.RGFW_windowFloating
+    WindowFlagFocusOnShow       WindowFlag = C.RGFW_windowFocusOnShow
+    WindowFlagMinimize          WindowFlag = C.RGFW_windowMinimize
+    WindowFlagFocus             WindowFlag = C.RGFW_windowFocus
+    // WindowFlagCaptureMouse      WindowFlag = C.RGFW_windowCaptureMouse
+    WindowFlagOpenGL            WindowFlag = C.RGFW_windowOpenGL
+    WindowFlagEGL               WindowFlag = C.RGFW_windowEGL
+    // WindowFlagNoDeinitOnClose   WindowFlag = C.RGFW_noDeinitOnClose
+    WindowFlagWindowedFullscreen   WindowFlag = C.RGFW_windowedFullscreen
+    // WindowFlagCaptureRawMouse   WindowFlag = C.RGFW_windowCaptureRawMouse
+)
+
+// NOT AVAILABLE IN CURRENT RGFW VERSION (1.8.5) BUT AVAILABLE IN 2.0.0
+// type FlashRequest uint8
+
+// const (
+// 	FlashCancel FlashRequest = C.RGFW_flashCancel
+// 	FlashBriefly FlashRequest = C.RGFW_flashBriefly
+// 	FlashUntilFocused FlashRequest = C.RGFW_flashUntilFocused
+// )
+
 type Key uint8
 
 const (
@@ -134,18 +170,6 @@ const (
     KeyWorld2     Key = C.RGFW_world2
 )
 
-type Keymod uint8
-
-const (
-	ModCapsLock   Keymod = C.RGFW_modCapsLock
-	ModNumLock    Keymod = C.RGFW_modNumLock
-	ModControl    Keymod = C.RGFW_modControl
-	ModAlt        Keymod = C.RGFW_modAlt
-	ModShift      Keymod = C.RGFW_modShift
-	ModSuper      Keymod = C.RGFW_modSuper
-	ModScrollLock Keymod = C.RGFW_modScrollLock
-)
-
 type MouseButton uint8
 
 const (
@@ -159,57 +183,14 @@ const (
 	MouseMisc5 MouseButton = C.RGFW_mouseMisc5
 )
 
-// Returns true if the key is pressed during the current frame
-// key is the key code of the key you want to check
-func IsKeyPressed(key Key) bool {
-    return C.RGFW_isKeyPressed(C.u8(key)) == C.RGFW_TRUE
-}
+type Keymod uint8
 
-// Returns true if the key was released during the current frame
-// key is the key code of the key you want to check
-func IsKeyReleased(key Key) bool {
-    return C.RGFW_isKeyReleased(C.u8(key)) == C.RGFW_TRUE
-}
-
-// Returns true if the key is down.
-// key is the key code of the key you want to check.
-func IsKeyDown(key Key) bool {
-    return C.RGFW_isKeyDown(C.u8(key)) == C.RGFW_TRUE
-}
-
-// Returns true if the mouse button is pressed during the current frame.
-// button is the mouse button code of the button you want to check.
-func IsMousePressed(button MouseButton) bool {
-    return C.RGFW_isMousePressed(C.u8(button)) == C.RGFW_TRUE
-}
-
-// Returns true if the mouse button is released during the current frame.
-// button is the mouse button code of the button you want to check.
-func IsMouseReleased(button MouseButton) bool {
-    return C.RGFW_isMouseReleased(C.u8(button)) == C.RGFW_TRUE
-}
-
-// Returns true if the mouse button is down.
-// button is the mouse button code of the button you want to check.
-func IsMouseDown(button MouseButton) bool {
-    return C.RGFW_isMouseDown(C.u8(button)) == C.RGFW_TRUE
-}
-
-// Outputs the current x, y position of the mouse.
-func GetMouseScroll() (float32, float32) {
-    var x, y C.float
-    C.RGFW_getMouseScroll(&x, &y)
-    return float32(x), float32(y)
-}
-
-func GetMouseVector() (float32, float32) {
-    var x, y C.float
-    C.RGFW_getMouseVector(&x, &y)
-    return float32(x), float32(y)
-}
-
-func GetGlobalMouse() (int, int) {
-    var x, y C.int
-    C.RGFW_getGlobalMouse(&x, &y)
-    return int(x), int(y)
-}
+const (
+	ModCapsLock   Keymod = C.RGFW_modCapsLock
+	ModNumLock    Keymod = C.RGFW_modNumLock
+	ModControl    Keymod = C.RGFW_modControl
+	ModAlt        Keymod = C.RGFW_modAlt
+	ModShift      Keymod = C.RGFW_modShift
+	ModSuper      Keymod = C.RGFW_modSuper
+	ModScrollLock Keymod = C.RGFW_modScrollLock
+)

@@ -5,6 +5,17 @@ package rgfw
 */
 import "C"
 
+type Format uint8
+
+const (
+	FormatRGB8 Format = C.RGFW_formatRGB8    /*!< 8-bit RGB (3 channels) */
+	FormatBGR8 Format = C.RGFW_formatBGR8    /*!< 8-bit BGR (3 channels) */
+	FormatRGBA8 Format = C.RGFW_formatRGBA8   /*!< 8-bit RGBA (4 channels) */
+	FormatARGB8 Format = C.RGFW_formatARGB8   /*!< 8-bit RGBA (4 channels) */
+	FormatBGRA8 Format = C.RGFW_formatBGRA8   /*!< 8-bit BGRA (4 channels) */
+	FormatABGR8 Format = C.RGFW_formatABGR8   /*!< 8-bit BGRA (4 channels) */
+)
+
 type Icon uint8
 
 const (

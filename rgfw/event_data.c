@@ -1,4 +1,4 @@
-#include "event.h"
+#include "event_data.h"
 
 wrapper_eventData wrapper_getEventData(RGFW_event* e) {
     wrapper_eventData d = {
