@@ -1,0 +1,4 @@
+- add opengl functions for RFGW
+- possibly add vulkan and directx functions? not well abstracted... maybe has to be separate package
+- add egl functions
+- add data drop/data drag relating functions that have arrays of strings. need to neatly convert C array of strings to Go array of string
